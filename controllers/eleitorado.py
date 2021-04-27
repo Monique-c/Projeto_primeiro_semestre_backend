@@ -1,45 +1,34 @@
-import csv
-import json
+from flask import jsonify
+import controllers.utils.queriesEleitorado as function
+import pymysql.cursors
+import simplejson as json
+import sys
 
-def generateList(dataset):
-
-	newList = []
-	newdata = list(dataset.items())
-	items = np.array(newdata)
-
-	for item in items:
-		newList.append({"name": item[0], "value": int(item[1])})
-
-	return newList
-
-
-def getMoreData(newData):
-	data = pd.read_json(newData)
-
-	grade = data.groupby(['DS_GRAU_ESCOLARIDADE'])[
-		'DS_GRAU_ESCOLARIDADE'].count().to_dict()
-
-	extraData = {
-		"escolaridade": generateList(grade),
-	}
-
-	return extraData
-
-
-def testQueryCSV(request):
-
+def connectDb(request):
 	json_data = request.get_json()
+	municipios = json_data["MN_MUNICIPIO"]
 
-	queryString = "DS_ESTADO_CIVIL == 'SOLTEIRO'"
-	csvString = "./dados/file2.csv"
+# Conexão com mysql
+	try:
+		connection = pymysql.connect(
+			user="admin",
+			password="admin",
+			host="127.0.0.1",
+			port=3306,
+			database="api_dados",
+			cursorclass=pymysql.cursors.DictCursor
+		)
 
-	data = pd.read_csv(csvString, sep=";", encoding="ISO-8859-1", skiprows=0)
+	except pymysql.Error as e:
+		print(f"Erro de conexão ao SGBD {e}")
+		sys.exit(1)
 
-	data.query(queryString, inplace=True)
-	newData = data.to_json(orient='records')
+	colunas = json_data["colunas"]
+	with connection:
+		with connection.cursor() as cursor:
+			retornoBanco = function.buscaPorMunicipiosComColunas(cursor, municipios, colunas)
 
-	allData = {
-		"solteiros": getMoreData(newData)
-	}
+	return json.dumps(retornoBanco)
 
-	return allData
+def eleitoradoQuery(request):
+	return connectDb(request)

@@ -14,10 +14,10 @@ def test():
   return jsonify(jsonTest)
 
 
-@app.route("/consultas", methods=['GET', 'POST'])
+@app.route("/pesquisas-eleitorado", methods=['GET', 'POST'])
 @cross_origin()
 def testQueryCSV():
-	return controllers.eleitorado.testQueryCSV(request)
+	return controllers.eleitorado.eleitoradoQuery(request)
 
 @app.route("/pesquisas-abstencao", methods=['GET', 'POST'])
 @cross_origin()
