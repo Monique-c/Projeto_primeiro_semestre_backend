@@ -1,20 +1,18 @@
-import json
-import pymysql.cursors
-import sys
 from flask import jsonify
-
-import controllers.utils.defs as function
+import controllers.utils.queriesAbstencao as function
+import pymysql.cursors
+import simplejson as json
+import sys
 
 def connectDb(request):
 	json_data = request.get_json()
 
 	data = (
-		'"' + json_data["parametro_busca"] +'"',
-		'"' + json_data["filtro_busca"] + '"'
+		json_data["MN_MUNICIPIO"],
 	)
 
-	estadoCivil = []
-	genero = []
+	abstencao_municipio = ""
+	comparecimento_municipio = ""
 
 # Conexão com mysql
 	try:
@@ -33,21 +31,16 @@ def connectDb(request):
 	with connection:
 
 		with connection.cursor() as cursor:
-			estadoCivil.append(function.estado_civil(cursor, data))
-			# genero.append(function.ds_genero(cursor, data))
+			abstencao_municipio = function.abstencaoMunicipio(cursor, data)
+			comparecimento_municipio = function.comparecimentoMunicipio(cursor, data)
 
-	response = jsonify(estadoCivil, genero)
+	response = json.dumps({
+		"eleitorado_municipio":abstencao_municipio, 
+		"nome_social_municipio":comparecimento_municipio
+	})
 
 	return response
 
 
 def abstencaoQuery(request):
-
-	json_data = request.get_json()
-
-	data = (
-		'"' + json_data["parametro_busca"] +'"',
-		'"' + json_data["filtro_busca"] + '"'
-	)
-
-	return data
+	return connectDb(request)
