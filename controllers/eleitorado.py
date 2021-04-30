@@ -6,7 +6,8 @@ import sys
 
 def connectDb(request):
 	json_data = request.get_json()
-	municipios = json_data["MN_MUNICIPIO"]
+	municipios = json_data["municipios"]
+	colunas = json_data["colunas"]
 
 # Conexão com mysql
 	try:
@@ -23,12 +24,13 @@ def connectDb(request):
 		print(f"Erro de conexão ao SGBD {e}")
 		sys.exit(1)
 
-	colunas = json_data["colunas"]
 	with connection:
 		with connection.cursor() as cursor:
-			retornoBanco = function.buscaPorMunicipiosComColunas(cursor, municipios, colunas)
+			retornoBancoEleitorado = function.buscaPorMunicipiosComColunas(cursor, municipios, colunas)
+			# retornoBancoFaixaEtaria = function.buscaFaixaEtáriaPorMunicipio(cursor, municipios)
 
-	return json.dumps(retornoBanco)
+	# return json.dumps(retornoBancoFaixaEtaria, retornoBancoFaixaEtaria)
+	return json.dumps(retornoBancoEleitorado)
 
 def eleitoradoQuery(request):
 	return connectDb(request)
