@@ -34,7 +34,7 @@ def connectDb(request):
 
 			for idx in range(len(municipios)):
 				for idades_perfil in retornoBancoFaixaEtaria:
-					if idades_perfil['municipio'] == municipios[idx]:
+					if idades_perfil['municipio'] == retornoBancoEleitorado[idx]['municipio']:
 						retornoBancoEleitorado[idx]['faixa_etaria'].append(idades_perfil)
 			
 
