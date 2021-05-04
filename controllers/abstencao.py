@@ -6,13 +6,8 @@ import sys
 
 def connectDb(request):
 	json_data = request.get_json()
-
-	data = (
-		json_data["MN_MUNICIPIO"],
-	)
-
-	abstencao_municipio = ""
-	comparecimento_municipio = ""
+	municipios = json_data["municipios"]
+	colunas = json_data["colunas"]
 
 # Conexão com mysql
 	try:
@@ -21,7 +16,8 @@ def connectDb(request):
 			password="admin",
 			host="127.0.0.1",
 			port=3306,
-			database="api_dados"
+			database="api_dados",
+			cursorclass=pymysql.cursors.DictCursor
 		)
 
 	except pymysql.Error as e:
@@ -29,18 +25,11 @@ def connectDb(request):
 		sys.exit(1)
 
 	with connection:
-
 		with connection.cursor() as cursor:
-			abstencao_municipio = function.abstencaoMunicipio(cursor, data)
-			comparecimento_municipio = function.comparecimentoMunicipio(cursor, data)
+			retornoBancoAbstencao =	function.buscaPorMunicipiosComColunas(cursor, municipios, colunas)
+			# retornoBancoFaixaEtaria = function.buscaFaixaEtáriaPorMunicipio(cursor, municipios)
 
-	response = json.dumps({
-		"eleitorado_municipio":abstencao_municipio, 
-		"nome_social_municipio":comparecimento_municipio
-	})
-
-	return response
-
+	return json.dumps(retornoBancoAbstencao)
 
 def abstencaoQuery(request):
 	return connectDb(request)

@@ -2,21 +2,37 @@ import simplejson as json
 import sys
 import decimal
 
-def abstencaoMunicipio(cursor, data):
-	query = "SELECT sum(`QT_ELEITORES_PERFIL`) FROM `eleitorado_ATUAL` \
-					WHERE `NM_MUNICIPIO` = %s"
+def buscaPorMunicipiosComColunas(cursor, municipios:[], colunas:[]):
+	query = compoeSomaPorColuna(colunas, municipios)
+	return buscarResultadoPara(query, cursor)
 
-	cursor.execute(query, data)
-	response = cursor.fetchone()
+def compoeSomaPorColuna(colunas:[], municipios:[]):
+	sumColumns = ', '.join(map(lambda coluna: "sum(`" + coluna + "`) as "+ coluna, colunas)) + " "
+	inMunicipios = ", ".join(map(lambda municipio: "'"+municipio+"'", municipios)) + " "
 
-	return json.dumps(response)
+	query = "SELECT `NM_MUNICIPIO`, " +\
+		sumColumns +\
+		"FROM `abstencao_2020` " +\
+		"WHERE `NM_MUNICIPIO` IN(" + inMunicipios + ") " +\
+		"AND `NR_TURNO` = '1'" +\
+		"GROUP BY `NM_MUNICIPIO` "
 
+	return query
 
-def comparecimentoMunicipio(cursor, data):
-	query ="SELECT sum(`QT_ELEITORES_INC_NM_SOCIAL`) FROM `eleitorado_ATUAL` \
-					WHERE `NM_MUNICIPIO` = %s"
+def buscaFaixaEtáriaPorMunicipio(cursor, municipios:[]):
+	inMunicipios = ", ".join(map(lambda municipio: "'"+municipio+"'", municipios)) + " "
+	query = "SELECT `CD_FAIXA_ETARIA`, `DS_FAIXA_ETARIA`, SUM(`QT_ABSTENCAO`) as 'quant_abstencao_faixa_etaria' \
+					FROM `abstencao_2020` " +\
+					"WHERE `NM_MUNICIPIO` IN(" + inMunicipios + ") " +\
+					"GROUP BY `CD_FAIXA_ETARIA`, `DS_FAIXA_ETARIA` \
+					ORDER BY `CD_FAIXA_ETARIA` DESC"
 
-	cursor.execute(query, data)
+	return buscarResultadoPara(query, cursor)
+
+def buscarResultadoPara(query:str, cursor):
+	cursor.execute(query)
 	response = cursor.fetchall()
-
-	return json.dumps(response)
+	print("=" * 20)
+	print(response)
+	print("=" * 20)
+	return response
