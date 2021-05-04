@@ -27,9 +27,17 @@ def connectDb(request):
 	with connection:
 		with connection.cursor() as cursor:
 			retornoBancoEleitorado = function.buscaPorMunicipiosComColunas(cursor, municipios, colunas)
-			# retornoBancoFaixaEtaria = function.buscaFaixaEtáriaPorMunicipio(cursor, municipios)
+			retornoBancoFaixaEtaria = function.buscaFaixaEtáriaPorMunicipio(cursor, municipios)
 
-	# return json.dumps(retornoBancoFaixaEtaria, retornoBancoFaixaEtaria)
+			for x in range(len(municipios)):
+				retornoBancoEleitorado[x]['faixa_etaria'] = []
+
+			for idx in range(len(municipios)):
+				for idades_perfil in retornoBancoFaixaEtaria:
+					if idades_perfil['municipio'] == municipios[idx]:
+						retornoBancoEleitorado[idx]['faixa_etaria'].append(idades_perfil)
+			
+
 	return json.dumps(retornoBancoEleitorado)
 
 def eleitoradoQuery(request):
