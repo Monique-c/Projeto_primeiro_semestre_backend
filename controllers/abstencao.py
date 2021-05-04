@@ -28,14 +28,27 @@ def connectDb(request):
 		with connection.cursor() as cursor:
 			retornoBancoAbstencao =	function.buscaPorMunicipiosComColunas(cursor, municipios, colunas)
 			retornoBancoFaixaEtaria = function.buscaFaixaEtáriaPorMunicipio(cursor, municipios)
+			retornoBancoEstadoCivil = function.buscaEstadoCivilPorMunicipio(cursor, municipios)
+			retornoBancoGrauEscolaridade = function.buscaGrauEscolaridadePorMunicipio(cursor, municipios)
+			print(retornoBancoGrauEscolaridade)
 
 			for x in range(len(municipios)):
 				retornoBancoAbstencao[x]['faixa_etaria'] = []
+				retornoBancoAbstencao[x]['estado_civil'] = []
+				retornoBancoAbstencao[x]['grau_escolaridade'] = []
 
 			for idx in range(len(municipios)):
-				for idades_perfil in retornoBancoAbstencao:
-					if idades_perfil['municipio'] == municipios[idx]:
+				for idades_perfil in retornoBancoFaixaEtaria:
+					if idades_perfil['municipio'] == retornoBancoAbstencao[idx]['municipio']:
 						retornoBancoAbstencao[idx]['faixa_etaria'].append(idades_perfil)
+
+				for estado_civil in retornoBancoEstadoCivil:
+					if estado_civil['municipio'] == retornoBancoAbstencao[idx]['municipio']:
+						retornoBancoAbstencao[idx]['estado_civil'].append(estado_civil)
+
+				for grau_escolaridade in retornoBancoGrauEscolaridade:
+					if grau_escolaridade['municipio'] == retornoBancoAbstencao[idx]['municipio']:
+						retornoBancoAbstencao[idx]['grau_escolaridade'].append(grau_escolaridade)
 
 	return json.dumps(retornoBancoAbstencao)
 
