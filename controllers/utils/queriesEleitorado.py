@@ -15,6 +15,32 @@ def buscaFaixaEtáriaPorMunicipio(cursor, municipios:[]):
 
 	return buscarResultadoPara(query, cursor)
 
+def buscaEstadoCivilPorMunicipio(cursor, municipios:[]):
+	inMunicipios = ", ".join(map(lambda municipio: "'"+municipio+"'", municipios)) + " "
+
+	query = "SELECT `NM_MUNICIPIO` AS 'municipio', \
+					`CD_ESTADO_CIVIL` AS 'cd_estado_civil', `DS_ESTADO_CIVIL` AS 'desc_estado_civil', \
+					 SUM(QT_ELEITORES_PERFIL) AS 'soma_eleitores_perfil' \
+					FROM `eleitorado_ATUAL` " +\
+					"WHERE `NM_MUNICIPIO` IN(" + inMunicipios + ") " +\
+					"GROUP BY NM_MUNICIPIO, CD_ESTADO_CIVIL, DS_ESTADO_CIVIL \
+					ORDER BY NM_MUNICIPIO ASC"
+
+	return buscarResultadoPara(query, cursor)
+
+def buscaGrauEscolaridadePorMunicipio(cursor, municipios:[]):
+	inMunicipios = ", ".join(map(lambda municipio: "'"+municipio+"'", municipios)) + " "
+
+	query = "SELECT `NM_MUNICIPIO` AS 'municipio', \
+					`CD_GRAU_ESCOLARIDADE` AS 'cd_grau_escolaridade', `DS_GRAU_ESCOLARIDADE` AS 'desc_grau_escolaridade', \
+					 SUM(QT_ELEITORES_PERFIL) AS 'soma_eleitores_perfil' \
+					FROM `eleitorado_ATUAL` " +\
+					"WHERE `NM_MUNICIPIO` IN(" + inMunicipios + ") " +\
+					"GROUP BY NM_MUNICIPIO, CD_GRAU_ESCOLARIDADE, DS_GRAU_ESCOLARIDADE \
+					ORDER BY NM_MUNICIPIO ASC"
+
+	return buscarResultadoPara(query, cursor)
+
 
 def buscaPorMunicipiosComColunas(cursor, municipios:[], colunas:[]):
 	query = compoeSomaPorColuna(colunas, municipios)
