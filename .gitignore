@@ -1,4 +1,4 @@
 *.csv
-
 /venv
-
+/controller/__pycache__/
+/controller/utils/__pycache__/
