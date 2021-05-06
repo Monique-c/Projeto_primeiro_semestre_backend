@@ -8,61 +8,102 @@ def buscaPorMunicipiosComColunas(cursor, municipios:[], colunas:[]):
 
 def compoeSomaPorColuna(colunas:[], municipios:[]):
 	sumColumns = ', '.join(map(lambda coluna: "sum(`" + coluna + "`) as "+ coluna, colunas)) + " "
-	inMunicipios = ", ".join(map(lambda municipio: "'"+municipio+"'", municipios)) + " "
 
-	query = "SELECT `NM_MUNICIPIO` AS municipio, " +\
-		sumColumns +\
-		"FROM `abstencao_2020` " +\
-		"WHERE `NM_MUNICIPIO` IN(" + inMunicipios + ") " +\
-		"GROUP BY `NM_MUNICIPIO`"
+	if not municipios:
+		query = "SELECT " + sumColumns +\
+			"FROM `abstencao_2020` \
+			WHERE NR_TURNO = '1'"
+
+	else:
+		inMunicipios = ", ".join(map(lambda municipio: "'"+municipio+"'", municipios)) + " "
+		query = "SELECT `NM_MUNICIPIO` AS municipio, " +\
+			sumColumns +\
+			"FROM `abstencao_2020` " +\
+			"WHERE `NM_MUNICIPIO` IN(" + inMunicipios + ") " +\
+			"AND NR_TURNO = '1' \
+			GROUP BY `NM_MUNICIPIO`"
 
 	return query
 
-def buscaFaixaEtáriaPorMunicipio(cursor, municipios:[]):
-	inMunicipios = ", ".join(map(lambda municipio: "'"+municipio+"'", municipios)) + " "
 
-	query = "SELECT `NM_MUNICIPIO` AS 'municipio', \
-					`CD_FAIXA_ETARIA` AS 'cd_faixa_etaria', `DS_FAIXA_ETARIA` AS 'desc_faixa_etaria', \
-					SUM(QT_APTOS) AS 'qt_aptos', \
-					SUM(QT_ABSTENCAO) AS 'qt_abstencao', \
-					SUM(QT_COMPARECIMENTO) AS 'qt_comparecimento' \
-					FROM `abstencao_2020` " +\
-					"WHERE `NM_MUNICIPIO` IN(" + inMunicipios + ") " +\
-					"AND `NR_TURNO` = '1'" +\
-					"GROUP BY NM_MUNICIPIO, CD_FAIXA_ETARIA, DS_FAIXA_ETARIA \
-					ORDER BY NM_MUNICIPIO ASC"
+def buscaFaixaEtáriaPorMunicipio(cursor, municipios:[]):
+	if not municipios:
+		query = "SELECT `DS_FAIXA_ETARIA` AS 'desc_faixa_etaria', \
+						SUM(QT_APTOS) AS 'qt_aptos', \
+						SUM(QT_ABSTENCAO) AS 'qt_abstencao', \
+						SUM(QT_COMPARECIMENTO) AS 'qt_comparecimento' \
+						FROM `abstencao_2020` " +\
+						"WHERE `NR_TURNO` = '1' " +\
+						"GROUP BY DS_FAIXA_ETARIA \
+						ORDER BY DS_FAIXA_ETARIA ASC"
+
+	else:
+		inMunicipios = ", ".join(map(lambda municipio: "'"+municipio+"'", municipios)) + " "
+
+		query = "SELECT `NM_MUNICIPIO` AS 'municipio', \
+						`DS_FAIXA_ETARIA` AS 'desc_faixa_etaria', \
+						SUM(QT_APTOS) AS 'qt_aptos', \
+						SUM(QT_ABSTENCAO) AS 'qt_abstencao', \
+						SUM(QT_COMPARECIMENTO) AS 'qt_comparecimento' \
+						FROM `abstencao_2020` " +\
+						"WHERE `NM_MUNICIPIO` IN(" + inMunicipios + ") " +\
+						"AND `NR_TURNO` = '1'" +\
+						"GROUP BY NM_MUNICIPIO, DS_FAIXA_ETARIA \
+						ORDER BY NM_MUNICIPIO ASC"
 
 	return buscarResultadoPara(query, cursor)
 
 def buscaEstadoCivilPorMunicipio(cursor, municipios:[]):
-	inMunicipios = ", ".join(map(lambda municipio: "'"+municipio+"'", municipios)) + " "
+	if not municipios:
+		query = "SELECT `DS_ESTADO_CIVIL` AS 'desc_estado_civil', \
+						SUM(QT_APTOS) AS 'qt_aptos', \
+						SUM(QT_ABSTENCAO) AS 'qt_abstencao', \
+						SUM(QT_COMPARECIMENTO) AS 'qt_comparecimento' \
+						FROM `abstencao_2020` " +\
+						"WHERE `NR_TURNO` = '1'" +\
+						"GROUP BY DS_ESTADO_CIVIL \
+						ORDER BY DS_ESTADO_CIVIL ASC"
 
-	query = "SELECT `NM_MUNICIPIO` AS 'municipio', \
-					`CD_ESTADO_CIVIL` AS 'cd_estado_civil', `DS_ESTADO_CIVIL` AS 'desc_estado_civil', \
-					SUM(QT_APTOS) AS 'qt_aptos', \
-					SUM(QT_ABSTENCAO) AS 'qt_abstencao', \
-					SUM(QT_COMPARECIMENTO) AS 'qt_comparecimento' \
-					FROM `abstencao_2020` " +\
-					"WHERE `NM_MUNICIPIO` IN(" + inMunicipios + ") " +\
-					"AND `NR_TURNO` = '1'" +\
-					"GROUP BY NM_MUNICIPIO, CD_ESTADO_CIVIL, DS_ESTADO_CIVIL \
-					ORDER BY NM_MUNICIPIO ASC"
+	else:
+		inMunicipios = ", ".join(map(lambda municipio: "'"+municipio+"'", municipios)) + " "
+
+		query = "SELECT `NM_MUNICIPIO` AS 'municipio', \
+						`DS_ESTADO_CIVIL` AS 'desc_estado_civil', \
+						SUM(QT_APTOS) AS 'qt_aptos', \
+						SUM(QT_ABSTENCAO) AS 'qt_abstencao', \
+						SUM(QT_COMPARECIMENTO) AS 'qt_comparecimento' \
+						FROM `abstencao_2020` " +\
+						"WHERE `NM_MUNICIPIO` IN(" + inMunicipios + ") " +\
+						"AND `NR_TURNO` = '1'" +\
+						"GROUP BY NM_MUNICIPIO,DS_ESTADO_CIVIL \
+						ORDER BY NM_MUNICIPIO ASC"
 
 	return buscarResultadoPara(query, cursor)
 
 def buscaGrauEscolaridadePorMunicipio(cursor, municipios:[]):
-	inMunicipios = ", ".join(map(lambda municipio: "'"+municipio+"'", municipios)) + " "
+	if not municipios:
+		query = "SELECT `DS_GRAU_ESCOLARIDADE` AS 'desc_grau_escolaridade', \
+						SUM(QT_APTOS) AS 'qt_aptos', \
+						SUM(QT_ABSTENCAO) AS 'qt_abstencao', \
+						SUM(QT_COMPARECIMENTO) AS 'qt_comparecimento' \
+						FROM `abstencao_2020` " +\
+						"WHERE `NR_TURNO` = '1'" +\
+						"GROUP BY DS_GRAU_ESCOLARIDADE \
+						ORDER BY DS_GRAU_ESCOLARIDADE ASC"
+						
+	else:
+		inMunicipios = ", ".join(map(lambda municipio: "'"+municipio+"'", municipios)) + " "
 
-	query = "SELECT `NM_MUNICIPIO` AS 'municipio', \
-					`CD_GRAU_ESCOLARIDADE` AS 'cd_grau_escolaridade', `DS_GRAU_ESCOLARIDADE` AS 'desc_grau_escolaridade', \
-					SUM(QT_APTOS) AS 'qt_aptos', \
-					SUM(QT_ABSTENCAO) AS 'qt_abstencao', \
-					SUM(QT_COMPARECIMENTO) AS 'qt_comparecimento' \
-					FROM `abstencao_2020` " +\
-					"WHERE `NM_MUNICIPIO` IN(" + inMunicipios + ") " +\
-					"AND `NR_TURNO` = '1'" +\
-					"GROUP BY NM_MUNICIPIO, CD_GRAU_ESCOLARIDADE, DS_GRAU_ESCOLARIDADE \
-					ORDER BY NM_MUNICIPIO ASC"
+		query = "SELECT `NM_MUNICIPIO` AS 'municipio', \
+						`DS_GRAU_ESCOLARIDADE` AS 'desc_grau_escolaridade', \
+						SUM(QT_APTOS) AS 'qt_aptos', \
+						SUM(QT_ABSTENCAO) AS 'qt_abstencao', \
+						SUM(QT_COMPARECIMENTO) AS 'qt_comparecimento' \
+						FROM `abstencao_2020` " +\
+						"WHERE `NM_MUNICIPIO` IN(" + inMunicipios + ") " +\
+						"AND `NR_TURNO` = '1'" +\
+						"GROUP BY NM_MUNICIPIO, DS_GRAU_ESCOLARIDADE \
+						ORDER BY NM_MUNICIPIO ASC"
 
 	return buscarResultadoPara(query, cursor)
 
