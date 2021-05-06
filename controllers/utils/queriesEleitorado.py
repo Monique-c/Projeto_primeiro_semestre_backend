@@ -54,7 +54,7 @@ def compoeSomaPorColuna(colunas:[], municipios:[]):
 		sumColumns +\
 		"FROM `eleitorado_ATUAL` " +\
 		"WHERE `NM_MUNICIPIO` IN(" + inMunicipios + ") " +\
-		"GROUP BY `NM_MUNICIPIO`"	
+		"GROUP BY `NM_MUNICIPIO`"
 
 	return query
 

@@ -15,12 +15,6 @@ def test():
   jsonTest = {"status": "API Online"}
   return jsonify(jsonTest)
 
-@app.route("/testDB", methods=['GET', 'POST'])
-@cross_origin()
-def connectDb():
-	return controllers.abstencao.connectDb(request)
-
-
 @app.route("/pesquisas-eleitorado", methods=['GET', 'POST'])
 @cross_origin()
 def eleitoradoQuery():

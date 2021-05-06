@@ -6,13 +6,8 @@ import sys
 
 def connectDb(request):
 	json_data = request.get_json()
-
-	data = (
-		json_data["MN_MUNICIPIO"],
-	)
-
-	abstencao_municipio = ""
-	comparecimento_municipio = ""
+	municipios = json_data["municipios"]
+	colunas = json_data["colunas"]
 
 # Conexão com mysql
 	try:
@@ -21,7 +16,8 @@ def connectDb(request):
 			password="admin",
 			host="127.0.0.1",
 			port=3306,
-			database="api_dados"
+			database="api_dados",
+			cursorclass=pymysql.cursors.DictCursor
 		)
 
 	except pymysql.Error as e:
@@ -29,18 +25,32 @@ def connectDb(request):
 		sys.exit(1)
 
 	with connection:
-
 		with connection.cursor() as cursor:
-			abstencao_municipio = function.abstencaoMunicipio(cursor, data)
-			comparecimento_municipio = function.comparecimentoMunicipio(cursor, data)
+			retornoBancoAbstencao =	function.buscaPorMunicipiosComColunas(cursor, municipios, colunas)
+			retornoBancoFaixaEtaria = function.buscaFaixaEtáriaPorMunicipio(cursor, municipios)
+			retornoBancoEstadoCivil = function.buscaEstadoCivilPorMunicipio(cursor, municipios)
+			retornoBancoGrauEscolaridade = function.buscaGrauEscolaridadePorMunicipio(cursor, municipios)
+			print(retornoBancoGrauEscolaridade)
 
-	response = json.dumps({
-		"eleitorado_municipio":abstencao_municipio, 
-		"nome_social_municipio":comparecimento_municipio
-	})
+			for x in range(len(municipios)):
+				retornoBancoAbstencao[x]['faixa_etaria'] = []
+				retornoBancoAbstencao[x]['estado_civil'] = []
+				retornoBancoAbstencao[x]['grau_escolaridade'] = []
 
-	return response
+			for idx in range(len(municipios)):
+				for idades_perfil in retornoBancoFaixaEtaria:
+					if idades_perfil['municipio'] == retornoBancoAbstencao[idx]['municipio']:
+						retornoBancoAbstencao[idx]['faixa_etaria'].append(idades_perfil)
 
+				for estado_civil in retornoBancoEstadoCivil:
+					if estado_civil['municipio'] == retornoBancoAbstencao[idx]['municipio']:
+						retornoBancoAbstencao[idx]['estado_civil'].append(estado_civil)
+
+				for grau_escolaridade in retornoBancoGrauEscolaridade:
+					if grau_escolaridade['municipio'] == retornoBancoAbstencao[idx]['municipio']:
+						retornoBancoAbstencao[idx]['grau_escolaridade'].append(grau_escolaridade)
+
+	return json.dumps(retornoBancoAbstencao)
 
 def abstencaoQuery(request):
 	return connectDb(request)
