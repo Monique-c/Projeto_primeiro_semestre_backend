@@ -7,7 +7,6 @@ import sys
 def connectDb(request):
 	json_data = request.get_json()
 	municipios = json_data["municipios"]
-	colunas = json_data["colunas"]
 
 # Conexão com mysql
 	try:
@@ -24,12 +23,29 @@ def connectDb(request):
 		print(f"Erro de conexão ao SGBD {e}")
 		sys.exit(1)
 
-	# with connection:
-	# 	with connection.cursor() as cursor:
-			# retornoBancoEleitorado = function.buscaPorMunicipiosComColunas(cursor, municipios, colunas)
-			# retornoBancoFaixaEtaria = function.buscaFaixaEtáriaPorMunicipio(cursor, municipios)
+	with connection:
+		with connection.cursor() as cursor:
+			retornoBancoRendaEstado = function.mediaPIB_PIB_PercaptaESTADO(cursor)
+			retornoMaxPIB = function.maxPIB(cursor)
+			retornoMinPIB = function.minPIB(cursor)
+			retornoMaxPIB_Percapta = function.maxPIB_Percapta(cursor)
+			retornoMinPIB_Percapta = function.minPIB_Percapta(cursor)
 
-	# return json.dumps(retornoBancoEleitorado)
+			if not municipios:
+				retornoBancoRendaMunicipio = []
+			else:
+				retornoBancoRendaMunicipio = function.mediaPIB_PIB_Percapta(cursor, municipios)
+
+			jsonOrganizado = {
+				"media_PIB_percapta_ESTADO": retornoBancoRendaEstado,
+				"media_PIB_percapta_MUNICIPIO": retornoBancoRendaMunicipio,
+				"max_PIB":retornoMaxPIB,
+				"min_PIB":retornoMinPIB,
+				"max_PIB_Percapta":retornoMaxPIB_Percapta,
+				"min_PIB_Percapta":retornoMinPIB_Percapta
+			}
+
+	return json.dumps(jsonOrganizado)
 
 def rendaQuery(request):
 	return connectDb(request)
