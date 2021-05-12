@@ -107,6 +107,28 @@ def buscaGrauEscolaridadePorMunicipio(cursor, municipios:[]):
 
 	return buscarResultadoPara(query, cursor)
 
+def buscaMaioresAbstencoes(cursor):
+	query = "SELECT `NM_MUNICIPIO` as 'municipio', \
+					(sum(`QT_ABSTENCAO`) * 100) / sum(`QT_APTOS`) as 'max_abstencao' \
+					FROM abstencao_2020 \
+					WHERE `SG_UF` = 'SP' \
+					AND `NR_TURNO` = '1'\
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY max_abstencao DESC \
+					limit 5"
+	return buscarResultadoPara(query, cursor)
+
+def buscaMenoresAbstencoes(cursor):
+	query = "SELECT `NM_MUNICIPIO` as 'municipio', \
+					(sum(`QT_ABSTENCAO`) * 100) / sum(`QT_APTOS`) as 'min_abstencao' \
+					FROM abstencao_2020 \
+					WHERE `SG_UF` = 'SP' \
+					AND `NR_TURNO` = '1'\
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY min_abstencao ASC \
+					limit 5"
+	return buscarResultadoPara(query, cursor)
+
 
 def buscarResultadoPara(query:str, cursor):
 	cursor.execute(query)

@@ -30,6 +30,8 @@ def connectDb(request):
 			retornoBancoFaixaEtaria = function.buscaFaixaEtáriaPorMunicipio(cursor, municipios)
 			retornoBancoEstadoCivil = function.buscaEstadoCivilPorMunicipio(cursor, municipios)
 			retornoBancoGrauEscolaridade = function.buscaGrauEscolaridadePorMunicipio(cursor, municipios)
+			MenoresAbstencoes = function.buscaMenoresAbstencoes(cursor)
+			MaioresAbstencoes = function.buscaMaioresAbstencoes(cursor)
 
 			for x in range(len(retornoBancoAbstencao)):
 				retornoBancoAbstencao[x]['faixa_etaria'] = []
@@ -60,7 +62,13 @@ def connectDb(request):
 						if grau_escolaridade['municipio'] == retornoBancoAbstencao[idx]['municipio']:
 							retornoBancoAbstencao[idx]['grau_escolaridade'].append(grau_escolaridade)
 
-	return json.dumps(retornoBancoAbstencao)
+			JsonOrganizado = {
+				"comparecimento_abstencao":retornoBancoAbstencao,
+				"maiores_abstencoes":MaioresAbstencoes,
+				"menores_abstencoes":MenoresAbstencoes
+			}
+
+	return json.dumps(JsonOrganizado)
 
 def abstencaoQuery(request):
 	return connectDb(request)
