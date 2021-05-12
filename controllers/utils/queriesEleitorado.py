@@ -2,6 +2,35 @@ import simplejson as json
 import sys
 import decimal
 
+def buscaJovensPorMunicipio(cursor):
+	query = "SELECT \
+					`NM_MUNICIPIO` as 'municipio', \
+					SUM(`QT_ELEITORES_PERFIL`) AS 'max_eleitores_jovens' \
+					FROM eleitorado_ATUAL \
+					WHERE `DS_FAIXA_ETARIA` IN( \
+						'16 anos                       ', \
+						'17 anos                       ',  \
+						'18 anos                       ',  \
+						'19 anos                       ', \
+						'20 anos                       ',  \
+						'21 a 24 anos                  ', \
+						'25 a 29 anos                  ' \
+					) \
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY SUM(QT_ELEITORES_PERFIL) desc"
+
+	return buscarResultadoPara(query, cursor)
+
+def buscaTotalEleitoresPorMunicipio(cursor):
+	query = "SELECT \
+					`NM_MUNICIPIO` as 'municipio', \
+					SUM(`QT_ELEITORES_PERFIL`) AS 'total_eleitores_aptos' \
+					FROM eleitorado_ATUAL \
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY SUM(QT_ELEITORES_PERFIL) desc"
+
+	return buscarResultadoPara(query, cursor)
+
 def buscaFaixaEtáriaPorMunicipio(cursor, municipios:[]):
 	if not municipios:
 		query = "SELECT `DS_FAIXA_ETARIA` AS 'desc_faixa_etaria', \
