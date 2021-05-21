@@ -1,8 +1,9 @@
 from flask import jsonify
-import controllers.utils.queriesEleitorado as function
 import pymysql.cursors
 import simplejson as json
 import sys
+import controllers.utils.queriesEleitorado as function
+from controllers.utils.services.calcularPorcentagem import construirRankingEleitorado
 
 def connectDb(request):
 	json_data = request.get_json()
@@ -27,9 +28,14 @@ def connectDb(request):
 	with connection:
 		with connection.cursor() as cursor:
 			retornoBancoEleitorado = function.buscaPorMunicipiosComColunas(cursor, municipios, colunas)
+
 			retornoBancoFaixaEtaria = function.buscaFaixaEtáriaPorMunicipio(cursor, municipios)
 			retornoBancoEstadoCivil = function.buscaEstadoCivilPorMunicipio(cursor, municipios)
 			retornoBancoGrauEscolaridade = function.buscaGrauEscolaridadePorMunicipio(cursor, municipios)
+
+			TotalEleitoresPorMunicipio = function.buscaTotalEleitoresPorMunicipio(cursor)
+			JovensPorMunicipio = function.buscaJovensPorMunicipio(cursor)
+			IdososPorMunicipio = function.buscaIdososPorMunicipio(cursor)
 
 			for x in range(len(retornoBancoEleitorado)):
 				retornoBancoEleitorado[x]['faixa_etaria'] = []
@@ -46,7 +52,7 @@ def connectDb(request):
 					
 					for grau_escolaridade in retornoBancoGrauEscolaridade:
 						retornoBancoEleitorado[idx]['grau_escolaridade'].append(grau_escolaridade)
-						
+				
 				else:
 					for idades_perfil in retornoBancoFaixaEtaria:
 						if idades_perfil['municipio'] == retornoBancoEleitorado[idx]['municipio']:
@@ -59,9 +65,19 @@ def connectDb(request):
 					for grau_escolaridade in retornoBancoGrauEscolaridade:
 						if grau_escolaridade['municipio'] == retornoBancoEleitorado[idx]['municipio']:
 							retornoBancoEleitorado[idx]['grau_escolaridade'].append(grau_escolaridade)
-			
 
-	return json.dumps(retornoBancoEleitorado)
+
+			JsonOrganizado = {
+				"eleitorado":retornoBancoEleitorado,
+				"max_eleitorado_jovens": construirRankingEleitorado(JovensPorMunicipio, TotalEleitoresPorMunicipio, "jovens", True),
+				"min_eleitorado_jovens": construirRankingEleitorado(JovensPorMunicipio, TotalEleitoresPorMunicipio,"jovens", False),
+				"max_eleitorado_idosos": construirRankingEleitorado(IdososPorMunicipio, TotalEleitoresPorMunicipio, "idosos", True),
+				"min_eleitorado_idosos": construirRankingEleitorado(IdososPorMunicipio, TotalEleitoresPorMunicipio, "idosos", False)
+			}
+			
+			
+	return json.dumps(JsonOrganizado)
+
 
 def eleitoradoQuery(request):
 	return connectDb(request)
