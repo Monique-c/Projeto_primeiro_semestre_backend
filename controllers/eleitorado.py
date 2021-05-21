@@ -3,7 +3,7 @@ import pymysql.cursors
 import simplejson as json
 import sys
 import controllers.utils.queriesEleitorado as function
-from controllers.utils.calcularPorcentagem import construirRankingEleitorado
+from controllers.utils.services.calcularPorcentagem import construirRankingEleitorado
 
 def connectDb(request):
 	json_data = request.get_json()
@@ -35,6 +35,7 @@ def connectDb(request):
 
 			TotalEleitoresPorMunicipio = function.buscaTotalEleitoresPorMunicipio(cursor)
 			JovensPorMunicipio = function.buscaJovensPorMunicipio(cursor)
+			IdososPorMunicipio = function.buscaIdososPorMunicipio(cursor)
 
 			for x in range(len(retornoBancoEleitorado)):
 				retornoBancoEleitorado[x]['faixa_etaria'] = []
@@ -68,9 +69,12 @@ def connectDb(request):
 
 			JsonOrganizado = {
 				"eleitorado":retornoBancoEleitorado,
-				"max_eleitorado_jovens": construirRankingEleitorado(JovensPorMunicipio, TotalEleitoresPorMunicipio, True),
-				"min_eleitorado_jovens": construirRankingEleitorado(JovensPorMunicipio, TotalEleitoresPorMunicipio, False)
+				"max_eleitorado_jovens": construirRankingEleitorado(JovensPorMunicipio, TotalEleitoresPorMunicipio, "jovens", True),
+				"min_eleitorado_jovens": construirRankingEleitorado(JovensPorMunicipio, TotalEleitoresPorMunicipio,"jovens", False),
+				"max_eleitorado_idosos": construirRankingEleitorado(IdososPorMunicipio, TotalEleitoresPorMunicipio, "idosos", True),
+				"min_eleitorado_idosos": construirRankingEleitorado(IdososPorMunicipio, TotalEleitoresPorMunicipio, "idosos", False)
 			}
+			
 			
 	return json.dumps(JsonOrganizado)
 
