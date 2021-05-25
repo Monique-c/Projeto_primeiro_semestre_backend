@@ -2,6 +2,61 @@ import simplejson as json
 import sys
 import decimal
 
+def buscaSolteirosPorMunicipio(cursor):
+	query = "SELECT  \
+					`NM_MUNICIPIO` as 'municipio', \
+					SUM(`QT_ELEITORES_PERFIL`) AS 'max_eleitores_solteiros' \
+					FROM eleitorado_ATUAL \
+					WHERE DS_ESTADO_CIVIL IN('SOLTEIRO') \
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY SUM(QT_ELEITORES_PERFIL) DESC"
+
+	return buscarResultadoPara(query, cursor)
+
+def buscaCasadosPorMunicipio(cursor):
+	query = "SELECT  \
+					`NM_MUNICIPIO` as 'municipio', \
+					SUM(`QT_ELEITORES_PERFIL`) AS 'max_eleitores_casados' \
+					FROM eleitorado_ATUAL \
+					WHERE DS_ESTADO_CIVIL IN('CASADO') \
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY SUM(QT_ELEITORES_PERFIL) DESC"
+
+	return buscarResultadoPara(query, cursor)
+
+def buscaAnalfabetoPorMunicipio(cursor):
+	query = "SELECT  \
+					`NM_MUNICIPIO` as 'municipio', \
+					SUM(`QT_ELEITORES_PERFIL`) AS 'max_eleitores_analfabeto' \
+					FROM eleitorado_ATUAL \
+					WHERE DS_GRAU_ESCOLARIDADE IN('ANALFABETO') \
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY SUM(QT_ELEITORES_PERFIL) DESC"
+
+	return buscarResultadoPara(query, cursor)
+
+def buscaMedioCompletoPorMunicipio(cursor):
+	query = "SELECT  \
+					`NM_MUNICIPIO` as 'municipio', \
+					SUM(`QT_ELEITORES_PERFIL`) AS 'max_eleitores_medio_completo' \
+					FROM eleitorado_ATUAL \
+					WHERE DS_GRAU_ESCOLARIDADE IN('ENSINO MÉDIO COMPLETO') \
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY SUM(QT_ELEITORES_PERFIL) DESC"
+
+	return buscarResultadoPara(query, cursor)
+
+def buscaSuperiorPorMunicipio(cursor):
+	query = "SELECT  \
+					`NM_MUNICIPIO` as 'municipio', \
+					SUM(`QT_ELEITORES_PERFIL`) AS 'max_eleitores_superior_completo' \
+					FROM eleitorado_ATUAL \
+					WHERE DS_GRAU_ESCOLARIDADE IN('SUPERIOR COMPLETO') \
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY SUM(QT_ELEITORES_PERFIL) DESC"
+
+	return buscarResultadoPara(query, cursor)
+
 def buscaIdososPorMunicipio(cursor):
 	query = "SELECT \
 					`NM_MUNICIPIO` as 'municipio', \

@@ -36,6 +36,11 @@ def connectDb(request):
 			TotalEleitoresPorMunicipio = function.buscaTotalEleitoresPorMunicipio(cursor)
 			JovensPorMunicipio = function.buscaJovensPorMunicipio(cursor)
 			IdososPorMunicipio = function.buscaIdososPorMunicipio(cursor)
+			SuperiorPorMunicipio = function.buscaSuperiorPorMunicipio(cursor)
+			MedioCompletoPorMunicipio = function.buscaMedioCompletoPorMunicipio(cursor)
+			AnalfabetoPorMunicipio = function.buscaAnalfabetoPorMunicipio(cursor)
+			CasadosCompletoPorMunicipio = function.buscaCasadosPorMunicipio(cursor)
+			SolteirosPorMunicipio = function.buscaSolteirosPorMunicipio(cursor)
 
 			for x in range(len(retornoBancoEleitorado)):
 				retornoBancoEleitorado[x]['faixa_etaria'] = []
@@ -72,7 +77,17 @@ def connectDb(request):
 				"max_eleitorado_jovens": construirRankingEleitorado(JovensPorMunicipio, TotalEleitoresPorMunicipio, "jovens", True),
 				"min_eleitorado_jovens": construirRankingEleitorado(JovensPorMunicipio, TotalEleitoresPorMunicipio,"jovens", False),
 				"max_eleitorado_idosos": construirRankingEleitorado(IdososPorMunicipio, TotalEleitoresPorMunicipio, "idosos", True),
-				"min_eleitorado_idosos": construirRankingEleitorado(IdososPorMunicipio, TotalEleitoresPorMunicipio, "idosos", False)
+				"min_eleitorado_idosos": construirRankingEleitorado(IdososPorMunicipio, TotalEleitoresPorMunicipio, "idosos", False),
+				"max_eleitorado_superior_completo": construirRankingEleitorado(SuperiorPorMunicipio, TotalEleitoresPorMunicipio, "superior_completo", True),
+				"min_eleitorado_superior_completo": construirRankingEleitorado(SuperiorPorMunicipio, TotalEleitoresPorMunicipio, "superior_completo", False),
+				"max_eleitorado_medio_completo": construirRankingEleitorado(MedioCompletoPorMunicipio, TotalEleitoresPorMunicipio, "medio_completo", True),
+				"min_eleitorado_medio_completo": construirRankingEleitorado(MedioCompletoPorMunicipio, TotalEleitoresPorMunicipio, "medio_completo", False),
+				"max_eleitorado_analfabeto": construirRankingEleitorado(AnalfabetoPorMunicipio, TotalEleitoresPorMunicipio, "analfabeto", True),
+				"min_eleitorado_analfabeto": construirRankingEleitorado(AnalfabetoPorMunicipio, TotalEleitoresPorMunicipio, "analfabeto", False),
+				"max_eleitorado_casados": construirRankingEleitorado(CasadosCompletoPorMunicipio, TotalEleitoresPorMunicipio, "casados", True),
+				"min_eleitorado_casados": construirRankingEleitorado(CasadosCompletoPorMunicipio, TotalEleitoresPorMunicipio, "casados", False),
+				"max_eleitorado_solteiros": construirRankingEleitorado(SolteirosPorMunicipio, TotalEleitoresPorMunicipio, "solteiros", True),
+				"min_eleitorado_solteiros": construirRankingEleitorado(SolteirosPorMunicipio, TotalEleitoresPorMunicipio, "solteiros", False)
 			}
 			
 			
