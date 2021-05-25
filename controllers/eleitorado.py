@@ -35,6 +35,7 @@ def connectDb(request):
 
 			TotalEleitoresPorMunicipio = function.buscaTotalEleitoresPorMunicipio(cursor)
 			JovensPorMunicipio = function.buscaJovensPorMunicipio(cursor)
+			AdultosPorMunicipio = function.buscaAdultosPorMunicipio(cursor)
 			IdososPorMunicipio = function.buscaIdososPorMunicipio(cursor)
 			SuperiorPorMunicipio = function.buscaSuperiorPorMunicipio(cursor)
 			MedioCompletoPorMunicipio = function.buscaMedioCompletoPorMunicipio(cursor)
@@ -76,6 +77,8 @@ def connectDb(request):
 				"eleitorado":retornoBancoEleitorado,
 				"max_eleitorado_jovens": construirRankingEleitorado(JovensPorMunicipio, TotalEleitoresPorMunicipio, "jovens", True),
 				"min_eleitorado_jovens": construirRankingEleitorado(JovensPorMunicipio, TotalEleitoresPorMunicipio,"jovens", False),
+				"max_eleitorado_adultos": construirRankingEleitorado(AdultosPorMunicipio, TotalEleitoresPorMunicipio, "adultos", True),
+				"min_eleitorado_adultos": construirRankingEleitorado(AdultosPorMunicipio, TotalEleitoresPorMunicipio,"adultos", False),
 				"max_eleitorado_idosos": construirRankingEleitorado(IdososPorMunicipio, TotalEleitoresPorMunicipio, "idosos", True),
 				"min_eleitorado_idosos": construirRankingEleitorado(IdososPorMunicipio, TotalEleitoresPorMunicipio, "idosos", False),
 				"max_eleitorado_superior_completo": construirRankingEleitorado(SuperiorPorMunicipio, TotalEleitoresPorMunicipio, "superior_completo", True),

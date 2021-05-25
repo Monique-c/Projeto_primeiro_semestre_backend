@@ -78,6 +78,24 @@ def buscaIdososPorMunicipio(cursor):
 
 	return buscarResultadoPara(query, cursor)
 
+def buscaAdultosPorMunicipio(cursor):
+	query = 	"SELECT \
+						`NM_MUNICIPIO` as 'municipio', \
+						SUM(`QT_ELEITORES_PERFIL`) AS 'max_eleitores_adultos' \
+						FROM eleitorado_ATUAL \
+						WHERE `DS_FAIXA_ETARIA` IN( \
+							'30 a 34 anos                  ', \
+							'35 a 39 anos                  ',  \
+							'40 a 44 anos                  ',  \
+							'45 a 49 anos                  ', \
+							'50 a 54 anos                  ',  \
+							'55 a 59 anos                  ' \
+						) \
+						GROUP BY NM_MUNICIPIO \
+						ORDER BY max_eleitores_adultos DESC"
+
+	return buscarResultadoPara(query, cursor)
+
 def buscaJovensPorMunicipio(cursor):
 	query = "SELECT \
 					`NM_MUNICIPIO` as 'municipio', \
