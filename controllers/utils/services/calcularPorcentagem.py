@@ -21,3 +21,12 @@ def construirRankingEleitorado(CategoriaEstado:[], TotalEleitoresPorMunicipio:[]
     jsonCategoria.append(jsonPorcentagemSorted[index])
 
   return jsonCategoria
+
+
+
+def limitarArray(arrayInteiro):
+  arrayPivot = []
+  for index in range(5):	
+    arrayPivot.append(arrayInteiro[index])
+
+  return arrayPivot
