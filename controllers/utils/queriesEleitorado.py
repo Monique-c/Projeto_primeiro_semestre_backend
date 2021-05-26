@@ -2,6 +2,129 @@ import simplejson as json
 import sys
 import decimal
 
+def buscaSolteirosPorMunicipio(cursor):
+	query = "SELECT  \
+					`NM_MUNICIPIO` as 'municipio', \
+					SUM(`QT_ELEITORES_PERFIL`) AS 'max_eleitores_solteiros' \
+					FROM eleitorado_ATUAL \
+					WHERE DS_ESTADO_CIVIL IN('SOLTEIRO') \
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY SUM(QT_ELEITORES_PERFIL) DESC"
+
+	return buscarResultadoPara(query, cursor)
+
+def buscaCasadosPorMunicipio(cursor):
+	query = "SELECT  \
+					`NM_MUNICIPIO` as 'municipio', \
+					SUM(`QT_ELEITORES_PERFIL`) AS 'max_eleitores_casados' \
+					FROM eleitorado_ATUAL \
+					WHERE DS_ESTADO_CIVIL IN('CASADO') \
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY SUM(QT_ELEITORES_PERFIL) DESC"
+
+	return buscarResultadoPara(query, cursor)
+
+def buscaAnalfabetoPorMunicipio(cursor):
+	query = "SELECT  \
+					`NM_MUNICIPIO` as 'municipio', \
+					SUM(`QT_ELEITORES_PERFIL`) AS 'max_eleitores_analfabeto' \
+					FROM eleitorado_ATUAL \
+					WHERE DS_GRAU_ESCOLARIDADE IN('ANALFABETO') \
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY SUM(QT_ELEITORES_PERFIL) DESC"
+
+	return buscarResultadoPara(query, cursor)
+
+def buscaMedioCompletoPorMunicipio(cursor):
+	query = "SELECT  \
+					`NM_MUNICIPIO` as 'municipio', \
+					SUM(`QT_ELEITORES_PERFIL`) AS 'max_eleitores_medio_completo' \
+					FROM eleitorado_ATUAL \
+					WHERE DS_GRAU_ESCOLARIDADE IN('ENSINO MÉDIO COMPLETO') \
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY SUM(QT_ELEITORES_PERFIL) DESC"
+
+	return buscarResultadoPara(query, cursor)
+
+def buscaSuperiorPorMunicipio(cursor):
+	query = "SELECT  \
+					`NM_MUNICIPIO` as 'municipio', \
+					SUM(`QT_ELEITORES_PERFIL`) AS 'max_eleitores_superior_completo' \
+					FROM eleitorado_ATUAL \
+					WHERE DS_GRAU_ESCOLARIDADE IN('SUPERIOR COMPLETO') \
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY SUM(QT_ELEITORES_PERFIL) DESC"
+
+	return buscarResultadoPara(query, cursor)
+
+def buscaIdososPorMunicipio(cursor):
+	query = "SELECT \
+					`NM_MUNICIPIO` as 'municipio', \
+					SUM(`QT_ELEITORES_PERFIL`) AS 'max_eleitores_idosos' \
+					FROM eleitorado_ATUAL \
+					WHERE `DS_FAIXA_ETARIA` IN( \
+						'60 a 64 anos                  ', \
+						'65 a 69 anos                  ',  \
+						'70 a 74 anos                  ',  \
+						'75 a 79 anos                  ',  \
+						'80 a 84 anos                  ', \
+						'85 a 89 anos                  ', \
+						'90 a 94 anos                  ', \
+						'95 a 99 anos                  ', \
+						'100 anos ou mais              ' \
+					) \
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY max_eleitores_idosos DESC"
+
+	return buscarResultadoPara(query, cursor)
+
+def buscaAdultosPorMunicipio(cursor):
+	query = 	"SELECT \
+						`NM_MUNICIPIO` as 'municipio', \
+						SUM(`QT_ELEITORES_PERFIL`) AS 'max_eleitores_adultos' \
+						FROM eleitorado_ATUAL \
+						WHERE `DS_FAIXA_ETARIA` IN( \
+							'30 a 34 anos                  ', \
+							'35 a 39 anos                  ',  \
+							'40 a 44 anos                  ',  \
+							'45 a 49 anos                  ', \
+							'50 a 54 anos                  ',  \
+							'55 a 59 anos                  ' \
+						) \
+						GROUP BY NM_MUNICIPIO \
+						ORDER BY max_eleitores_adultos DESC"
+
+	return buscarResultadoPara(query, cursor)
+
+def buscaJovensPorMunicipio(cursor):
+	query = "SELECT \
+					`NM_MUNICIPIO` as 'municipio', \
+					SUM(`QT_ELEITORES_PERFIL`) AS 'max_eleitores_jovens' \
+					FROM eleitorado_ATUAL \
+					WHERE `DS_FAIXA_ETARIA` IN( \
+						'16 anos                       ', \
+						'17 anos                       ',  \
+						'18 anos                       ',  \
+						'19 anos                       ', \
+						'20 anos                       ',  \
+						'21 a 24 anos                  ', \
+						'25 a 29 anos                  ' \
+					) \
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY max_eleitores_jovens DESC"
+
+	return buscarResultadoPara(query, cursor)
+
+def buscaTotalEleitoresPorMunicipio(cursor):
+	query = "SELECT \
+					`NM_MUNICIPIO` as 'municipio', \
+					SUM(`QT_ELEITORES_PERFIL`) AS 'total_eleitores_aptos' \
+					FROM eleitorado_ATUAL \
+					GROUP BY NM_MUNICIPIO \
+					ORDER BY SUM(QT_ELEITORES_PERFIL) desc"
+
+	return buscarResultadoPara(query, cursor)
+
 def buscaFaixaEtáriaPorMunicipio(cursor, municipios:[]):
 	if not municipios:
 		query = "SELECT `DS_FAIXA_ETARIA` AS 'desc_faixa_etaria', \
