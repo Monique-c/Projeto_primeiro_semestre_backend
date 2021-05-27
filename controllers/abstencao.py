@@ -1,8 +1,9 @@
 from flask import jsonify
-import controllers.utils.queriesAbstencao as function
 import pymysql.cursors
 import simplejson as json
 import sys
+import controllers.utils.queriesAbstencao as function
+from controllers.utils.services.calcularPorcentagem import limitarArray
 
 def connectDb(request):
 	json_data = request.get_json()
@@ -30,6 +31,28 @@ def connectDb(request):
 			retornoBancoFaixaEtaria = function.buscaFaixaEtáriaPorMunicipio(cursor, municipios)
 			retornoBancoEstadoCivil = function.buscaEstadoCivilPorMunicipio(cursor, municipios)
 			retornoBancoGrauEscolaridade = function.buscaGrauEscolaridadePorMunicipio(cursor, municipios)
+
+			MenoresAbstencoes = function.buscaMenoresAbstencoes(cursor)
+			MaioresAbstencoes = list(reversed(MenoresAbstencoes))
+
+			MenoresAbstencoesJovens = function.buscaMenoresAbstencoesJovens(cursor)
+			MaioresAbstencoesJovens = list(reversed(MenoresAbstencoesJovens))
+			MenoresAbstencoesAdultos = function.buscaMenoresAbstencoesAdultos(cursor)
+			MaioresAbstencoesAdultos = list(reversed(MenoresAbstencoesAdultos))
+			MenoresAbstencoesIdosos = function.buscaMenoresAbstencoesIdosos(cursor)
+			MaioresAbstencoesIdosos = list(reversed(MenoresAbstencoesIdosos))
+
+			MenoresAbstencoesAnalfabetos = function.buscaMenoresAbstencoesAnalfabetos(cursor)
+			MaioresAbstencoesAnalfabetos = list(reversed(MenoresAbstencoesAnalfabetos))
+			MenoresAbstencoesMedioCompleto = function.buscaMenoresAbstencoesMedioCompleto(cursor)
+			MaioresAbstencoesMedioCompleto = list(reversed(MenoresAbstencoesMedioCompleto))
+			MenoresAbstencoesSuperiorCompleto = function.buscaMenoresAbstencoesSuperiorCompleto(cursor)
+			MaioresAbstencoesSuperiorCompleto = list(reversed(MenoresAbstencoesSuperiorCompleto))
+
+			MenoresAbstencoesCasados = function.buscaMenoresAbstencoesCasados(cursor)
+			MaioresAbstencoesCasados = list(reversed(MenoresAbstencoesCasados))
+			MenoresAbstencoesSolteiros = function.buscaMenoresAbstencoesSolteiros(cursor)
+			MaioresAbstencoesSolteiros = list(reversed(MenoresAbstencoesSolteiros))
 
 			for x in range(len(retornoBancoAbstencao)):
 				retornoBancoAbstencao[x]['faixa_etaria'] = []
@@ -60,7 +83,32 @@ def connectDb(request):
 						if grau_escolaridade['municipio'] == retornoBancoAbstencao[idx]['municipio']:
 							retornoBancoAbstencao[idx]['grau_escolaridade'].append(grau_escolaridade)
 
-	return json.dumps(retornoBancoAbstencao)
+			JsonOrganizado = {
+				"comparecimento_abstencao":retornoBancoAbstencao,
+				"maiores_abstencoes":limitarArray(MaioresAbstencoes),
+				"menores_abstencoes":limitarArray(MenoresAbstencoes),
+
+				"min_abstencoes_jovens":limitarArray(MenoresAbstencoesJovens),
+				"max_abstencoes_jovens":limitarArray(MaioresAbstencoesJovens),
+				"min_abstencoes_adultos":limitarArray(MenoresAbstencoesAdultos),
+				"max_abstencoes_adultos":limitarArray(MaioresAbstencoesAdultos),
+				"min_abstencoes_idosos":limitarArray(MenoresAbstencoesIdosos),
+				"max_abstencoes_idosos":limitarArray(MaioresAbstencoesIdosos),
+
+				"min_abstencoes_analfabeto":limitarArray(MenoresAbstencoesAnalfabetos),
+				"max_abstencoes_analfabeto":limitarArray(MaioresAbstencoesAnalfabetos),
+				"min_abstencoes_medio_completo":limitarArray(MenoresAbstencoesMedioCompleto),
+				"max_abstencoes_medio_completo":limitarArray(MaioresAbstencoesMedioCompleto),
+				"min_abstencoes_superior_completo":limitarArray(MenoresAbstencoesSuperiorCompleto),
+				"max_abstencoes_superior_completo":limitarArray(MaioresAbstencoesSuperiorCompleto),
+
+				"min_abstencoes_casados":limitarArray(MenoresAbstencoesCasados),
+				"max_abstencoes_casados":limitarArray(MaioresAbstencoesCasados),
+				"min_abstencoes_solteiros":limitarArray(MenoresAbstencoesSolteiros),
+				"max_abstencoes_solteiros":limitarArray(MaioresAbstencoesSolteiros)
+			}
+
+	return json.dumps(JsonOrganizado)
 
 def abstencaoQuery(request):
 	return connectDb(request)
