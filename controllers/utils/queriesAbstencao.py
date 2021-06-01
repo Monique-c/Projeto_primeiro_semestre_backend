@@ -109,7 +109,8 @@ def buscaGrauEscolaridadePorMunicipio(cursor, municipios:[]):
 
 def buscaMenoresAbstencoes(cursor):
 	query = "SELECT `NM_MUNICIPIO` as 'municipio', \
-					(sum(`QT_ABSTENCAO`) * 100) / sum(`QT_APTOS`) as 'min_abstencao' \
+					(sum(`QT_ABSTENCAO`) * 100) / sum(`QT_APTOS`) as 'min_abstencao', \
+					sum(`QT_ABSTENCAO`) as 'qt_min_abstencao' \
 					FROM abstencao_2020 \
 					WHERE `SG_UF` = 'SP' \
 					AND `NR_TURNO` = '1'\
@@ -119,7 +120,8 @@ def buscaMenoresAbstencoes(cursor):
 
 def buscaMenoresAbstencoesJovens(cursor):
 	query = "SELECT `NM_MUNICIPIO` as 'municipio', \
-					(sum(`QT_ABSTENCAO`) * 100) / sum(QT_APTOS) as 'abstencao_jovens' \
+					(sum(`QT_ABSTENCAO`) * 100) / sum(QT_APTOS) as 'abstencao_jovens', \
+					sum(`QT_ABSTENCAO`) as 'qt_abstencao_jovens' \
 					FROM abstencao_2020 \
 					WHERE SG_UF = 'SP' \
 					AND NR_TURNO = '1' \
@@ -139,7 +141,8 @@ def buscaMenoresAbstencoesJovens(cursor):
 
 def buscaMenoresAbstencoesAdultos(cursor):
 	query = "SELECT `NM_MUNICIPIO` as 'municipio', \
-					(sum(`QT_ABSTENCAO`) * 100) / sum(QT_APTOS) as 'abstencao_adultos' \
+					(sum(`QT_ABSTENCAO`) * 100) / sum(QT_APTOS) as 'abstencao_adultos', \
+					sum(`QT_ABSTENCAO`) as 'qt_abstencao_adultos' \
 					FROM abstencao_2020 \
 					WHERE SG_UF = 'SP' \
 					AND NR_TURNO = '1' \
@@ -158,7 +161,8 @@ def buscaMenoresAbstencoesAdultos(cursor):
 
 def buscaMenoresAbstencoesIdosos(cursor):
 	query = "SELECT `NM_MUNICIPIO` as 'municipio', \
-					(sum(`QT_ABSTENCAO`) * 100) / sum(QT_APTOS) as 'abstencao_idosos' \
+					(sum(`QT_ABSTENCAO`) * 100) / sum(QT_APTOS) as 'abstencao_idosos', \
+					sum(`QT_ABSTENCAO`) as 'qt_abstencao_idosos' \
 					FROM abstencao_2020 \
 					WHERE SG_UF = 'SP' \
 					AND NR_TURNO = '1' \
@@ -180,7 +184,8 @@ def buscaMenoresAbstencoesIdosos(cursor):
 
 def buscaMenoresAbstencoesAnalfabetos(cursor):
 	query = "SELECT `NM_MUNICIPIO` as 'municipio', \
-					(sum(`QT_ABSTENCAO`) * 100) / sum(QT_APTOS) as 'abstencao_analfabetos' \
+					(sum(`QT_ABSTENCAO`) * 100) / sum(QT_APTOS) as 'abstencao_analfabetos', \
+					sum(`QT_ABSTENCAO`) as 'qt_abstencao_analfabetos' \
 					FROM abstencao_2020 \
 					WHERE SG_UF = 'SP' \
 					AND NR_TURNO = '1' \
@@ -192,7 +197,8 @@ def buscaMenoresAbstencoesAnalfabetos(cursor):
 
 def buscaMenoresAbstencoesMedioCompleto(cursor):
 	query = "SELECT `NM_MUNICIPIO` as 'municipio', \
-					(sum(`QT_ABSTENCAO`) * 100) / sum(QT_APTOS) as 'abstencao_medio_completo' \
+					(sum(`QT_ABSTENCAO`) * 100) / sum(QT_APTOS) as 'abstencao_medio_completo', \
+					sum(`QT_ABSTENCAO`) as 'qt_abstencao_medio_completo' \
 					FROM abstencao_2020 \
 					WHERE SG_UF = 'SP' \
 					AND NR_TURNO = '1' \
@@ -204,7 +210,8 @@ def buscaMenoresAbstencoesMedioCompleto(cursor):
 
 def buscaMenoresAbstencoesSuperiorCompleto(cursor):
 	query = "SELECT `NM_MUNICIPIO` as 'municipio', \
-					(sum(`QT_ABSTENCAO`) * 100) / sum(QT_APTOS) as 'abstencao_superior_completo' \
+					(sum(`QT_ABSTENCAO`) * 100) / sum(QT_APTOS) as 'abstencao_superior_completo', \
+					sum(`QT_ABSTENCAO`) as 'qt_abstencao_superior_completo' \
 					FROM abstencao_2020 \
 					WHERE SG_UF = 'SP' \
 					AND NR_TURNO = '1' \
@@ -216,7 +223,8 @@ def buscaMenoresAbstencoesSuperiorCompleto(cursor):
 
 def buscaMenoresAbstencoesCasados(cursor):
 	query = "SELECT `NM_MUNICIPIO` as 'municipio', \
-					(sum(`QT_ABSTENCAO`) * 100) / sum(QT_APTOS) as 'abstencao_casados' \
+					(sum(`QT_ABSTENCAO`) * 100) / sum(QT_APTOS) as 'abstencao_casados', \
+					sum(`QT_ABSTENCAO`) as 'qt_abstencao_casados' \
 					FROM abstencao_2020 \
 					WHERE SG_UF = 'SP' \
 					AND NR_TURNO = '1' \
@@ -228,7 +236,8 @@ def buscaMenoresAbstencoesCasados(cursor):
 
 def buscaMenoresAbstencoesSolteiros(cursor):
 	query = "SELECT `NM_MUNICIPIO` as 'municipio', \
-					(sum(`QT_ABSTENCAO`) * 100) / sum(QT_APTOS) as 'abstencao_solteiros' \
+					round((sum(`QT_ABSTENCAO`) * 100) / sum(QT_APTOS),2) as 'abstencao_solteiros', \
+					sum(`QT_ABSTENCAO`) as 'qt_abstencao_solteiros' \
 					FROM abstencao_2020 \
 					WHERE SG_UF = 'SP' \
 					AND NR_TURNO = '1' \
