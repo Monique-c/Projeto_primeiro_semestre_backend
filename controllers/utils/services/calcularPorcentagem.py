@@ -11,7 +11,8 @@ def construirRankingEleitorado(CategoriaEstado:[], TotalEleitoresPorMunicipio:[]
 
         jsonPorcentagem['resultado'].append({
           'municipio':item_categoria['municipio'],
-          'porcentagem_eleitorado_'+categoria: float("{:.2f}".format(calculo_porcentagem))
+          'porcentagem_eleitorado_'+categoria: float("{:.2f}".format(calculo_porcentagem)),
+          'valor_eleitorado_'+categoria: item_categoria['max_eleitores_'+categoria]
         }) 
         break
 
